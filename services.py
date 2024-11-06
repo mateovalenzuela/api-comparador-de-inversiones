@@ -1,16 +1,14 @@
 from typing import List
-from schemas import MoneyMarketInvestmentResponse, FixedInvestmentWithReinvestmentResponse, \
-    FixedInvestmentWithoutReinvestmentResponse
+from schemas import InvestmentResponse
 
 
-def calculate_fixed_term_without_reinvestment(principal: float, interest_rate: float, months: int) -> List[
-    FixedInvestmentWithoutReinvestmentResponse]:
+def calculate_fixed_term_without_reinvestment(principal: float, interest_rate: float, months: int) -> List[InvestmentResponse]:
     # TNA mensual
     monthly_interest_rate = (interest_rate / 100) / 12
     fixed_investments = []
 
     # Agregar importe inicial en el mes 0
-    fixed_investments.append(FixedInvestmentWithoutReinvestmentResponse(
+    fixed_investments.append(InvestmentResponse(
         amount=round(principal, 2),
         month=0,
     ))
@@ -23,7 +21,7 @@ def calculate_fixed_term_without_reinvestment(principal: float, interest_rate: f
         if month % 12 == 0:
             current_amount *= (1 + interest_rate / 100)  # Capitalización anual
         # Se agrega el monto del mes actual
-        fixed_investments.append(FixedInvestmentWithoutReinvestmentResponse(
+        fixed_investments.append(InvestmentResponse(
             amount=round(current_amount, 2),
             month=month,
         ))
@@ -32,7 +30,7 @@ def calculate_fixed_term_without_reinvestment(principal: float, interest_rate: f
 
 
 def calculate_fixed_term_with_monthly_reinvestment(principal: float, interest_rate: float, months_duration: int) -> \
-        List[FixedInvestmentWithReinvestmentResponse]:
+        List[InvestmentResponse]:
     # Convertimos la tasa anual en decimal
     annual_rate = interest_rate / 100
     # Calculamos la tasa nominal mensual
@@ -42,7 +40,7 @@ def calculate_fixed_term_with_monthly_reinvestment(principal: float, interest_ra
     current_amount = principal
 
     # Agregado de importe inicial al resultado
-    investment_growth.append(FixedInvestmentWithReinvestmentResponse(
+    investment_growth.append(InvestmentResponse(
         month=0,
         amount=round(current_amount, 2)
     ))
@@ -50,7 +48,7 @@ def calculate_fixed_term_with_monthly_reinvestment(principal: float, interest_ra
     for month in range(1, months_duration + 1):
         # Capitalización mensual con interés compuesto
         current_amount *= (1 + monthly_rate)
-        investment_growth.append(FixedInvestmentWithReinvestmentResponse(
+        investment_growth.append(InvestmentResponse(
             month=month,
             amount=round(current_amount, 2)
         ))
@@ -58,13 +56,12 @@ def calculate_fixed_term_with_monthly_reinvestment(principal: float, interest_ra
     return investment_growth
 
 
-def calculate_money_market_investment(principal: float, interest_rate: float, months: int) -> List[
-    MoneyMarketInvestmentResponse]:
+def calculate_money_market_investment(principal: float, interest_rate: float, months: int) -> List[InvestmentResponse]:
     daily_interest_rate = (interest_rate / 100) / 365  # TNA diaria
     investments = []
 
     # agregado de importe inicial al resulatdo
-    investments.append(MoneyMarketInvestmentResponse(
+    investments.append(InvestmentResponse(
         amount=round(principal, 2),
         month=0,
     ))
@@ -72,7 +69,7 @@ def calculate_money_market_investment(principal: float, interest_rate: float, mo
     for month in range(1, months + 1):
         # Calcula el monto con interés compuesto diario hasta el mes actual
         amount = principal * ((1 + daily_interest_rate) ** (365 * month / 12))
-        investments.append(MoneyMarketInvestmentResponse(
+        investments.append(InvestmentResponse(
             amount=round(amount, 2),
             month=month,
         ))
