@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: fastapi
+    image: mateovalenzuela/apiinversiones:latest
+    networks:
+      - app-network
+    expose:
+      - "8000"
+
+  frontend:
+    container_name: react-app
+    image: mateovalenzuela/frontinversiones:latest
+    ports:
+      - "80:80"  # Nginx servirá en el puerto 80
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
